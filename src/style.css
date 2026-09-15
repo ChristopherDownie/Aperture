@@ -1,0 +1,119 @@
+:root {
+  --vision-surface: #191919;
+  --vision-border: #383838;
+  --vision-text: #e5e5e5;
+  --vision-muted: #a3a3a3;
+  --vision-selected: #303030;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e7e7e7;
+  background: #111111;
+  color-scheme: dark;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+#app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+.app-header { height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; border-bottom: 1px solid #2b2b2b; background: #161616; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; color: #161616; background: #e0e0e0; font-size: 14px; font-weight: 800; }
+h1 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: .015em; white-space: nowrap; }
+.local-badge { font-size: 11px; color: #979797; padding-left: 12px; margin-left: 4px; border-left: 1px solid #363636; white-space: nowrap; }
+.app-header a { color: #aeaeae; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.app-header a:hover { color: #ffffff; }
+.app-header a:focus-visible { outline: 2px solid #e0e0e0; outline-offset: 5px; }
+#chart { flex: 1; min-height: 0; position: relative; }
+.vision-trigger svg { width: 20px; height: 20px; }
+.vision-trigger:focus-visible { outline: 1px solid var(--vela-fg-muted); outline-offset: -3px; }
+.vision-trigger[aria-pressed='true'] { color: #e0e0e0; }
+.vision-panel { position: fixed; right: 24px; bottom: 52px; width: 400px; z-index: 90; background: var(--vision-surface); color: var(--vision-text); border: 1px solid var(--vision-border); border-radius: 10px; box-shadow: 0 16px 50px #00000055; overflow: hidden; font-size: 12px; }
+.vision-panel[hidden] { display: none; }
+.vision-panel header { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; }
+.vision-panel strong { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 550; }
+.vision-led { width: 6px; height: 6px; border-radius: 50%; background: #929292; }
+.vision-panel[data-running='true'] .vision-led { background: #e5e5e5; }
+.vision-panel button { background: #ffffff08; border: 1px solid #ffffff16; border-radius: 5px; color: #cfcfcf; padding: 4px 7px; cursor: pointer; font: inherit; }
+.vision-panel button:hover { background: #ffffff18; }
+.vision-panel button:focus-visible { outline: 2px solid #e0e0e0; outline-offset: 2px; }
+.vision-camera { position: relative; aspect-ratio: 4 / 3; background: #0c0c0c; overflow: hidden; margin: 0 8px; border-radius: 7px; }
+.vision-camera video { width: 100%; height: 100%; object-fit: contain; transform: scaleX(-1); }
+.vision-camera canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.vision-camera-label { position: absolute; left: 8px; bottom: 8px; background: #0f0f0fcc; color: #e0e0e0; padding: 4px 6px; border-radius: 4px; font-size: 9px; letter-spacing: .1em; }
+.vision-details { padding: 0 14px 14px; }
+.vision-details p { line-height: 1.55; color: #a9a9a9; margin: 8px 0; }
+.vision-details .vision-state { color: #e8e8e8; font-size: 12px; font-weight: 550; }
+.vision-panel[data-zooming='true'] .vision-state { color: #e0e0e0; }
+.vision-hand-states { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
+.vision-hand-states span { padding: 4px 6px; border-radius: 4px; background: #ffffff08; color: #b7b7b7; font-size: 10px; }
+.vision-hand-states span[data-pinched='true'] { color: #e0e0e0; background: #e0e0e016; }
+.vision-hints { display: flex; justify-content: space-between; gap: 8px; color: #999999; font-size: 10px; border-top: 1px solid #ffffff12; padding-top: 10px; margin-top: 12px; }
+.vision-overlay { position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 85; }
+.vision-pointer { color: #c8c8c8; }
+.vision-pointer[data-hand='Right'] { color: #cfcfcf; }
+.vision-ring { fill: #151515aa; stroke: currentColor; stroke-width: 2; }
+.vision-dot { fill: currentColor; }
+.vision-pointer.pinched { color: #e0e0e0; }
+.vision-pointer.panning { color: #d9d9d9; }
+.vision-pointer.claw { color: #c4c4c4; }
+.vision-panel .vision-mode-button { width: 100%; margin-top: 10px; text-align: left; color: #e0e0e0; padding: 7px 9px; }
+.vision-panel[data-mode='drawing'] .vision-mode-button { color: #c4c4c4; }
+.vision-panel { max-height: calc(100dvh - 110px); overflow-y: auto; }
+.vision-mode-menu { position: fixed; z-index: 100; width: min(280px, calc(100vw - 24px)); transform: translate(-50%, -110px); padding: 12px; border: 1px solid var(--vision-border); border-radius: 10px; background: var(--vision-surface); box-shadow: 0 16px 40px #00000077; color: #e9e9e9; font-size: 12px; }
+.vision-mode-menu[hidden] { display: none; }
+.vision-menu-heading { display: flex; justify-content: space-between; color: var(--vision-muted); font: 500 11px -apple-system, BlinkMacSystemFont, sans-serif; padding: 2px 4px 12px; }
+.vision-menu-items { display: grid; gap: 7px; }
+.vision-menu-items button { display: flex; align-items: center; gap: 12px; width: 100%; border: 1px solid #ffffff14; border-radius: 6px; padding: 13px 12px; background: #ffffff03; color: #bfbfbf; text-align: left; font: inherit; cursor: pointer; }
+.vision-menu-items button span { font-size: 22px; }
+.vision-menu-items button small { display: block; font-size: 10px; opacity: .65; margin-top: 4px; }
+.vision-menu-items button i { margin-left: auto; font-style: normal; opacity: .55; }
+.vision-menu-items button[aria-pressed='true'] { color: #e0e0e0; }
+.vision-menu-items button[data-highlighted='true'], .vision-menu-items button:hover, .vision-menu-items button:focus-visible { border-color: #737373; background: var(--vision-selected); color: #fff; outline: none; box-shadow: inset 2px 0 #e5e5e5; }
+.vision-mode-menu p { color: #acacac; font-size: 10px; line-height: 1.6; margin: 12px 4px 8px; }
+.vision-menu-cancel { color: #c1c1c1; background: transparent; border: 0; padding: 4px; cursor: pointer; }
+.vision-panel[data-panning='true'] .vision-state { color: #d9d9d9; }
+.vision-pointer.pinched .vision-ring { fill: #e0e0e025; stroke-width: 3; }
+.vision-link { stroke: #e0e0e0; stroke-width: 1.5; stroke-dasharray: 5 6; }
+.vision-anchor { fill: #e0e0e0; stroke: #1f1f1f; stroke-width: 2; }
+@media(max-width:600px) { .vision-details p { font-size: 11px; } }
+.startup-error { display: grid; height: 100%; place-items: center; padding: 24px; text-align: center; }
+@media (max-width: 540px) { .app-header { padding: 0 10px; height: 42px; } .local-badge { display: none; } }
+
+
+.vision-palm-hold { display: block; width: 100%; height: 4px; border: 0; margin: 8px 0; accent-color: #c4c4c4; }
+.vision-palm-hold[hidden] { display: none; }
+.vision-guide { border-top: 1px solid #ffffff12; margin-top: 8px; padding-top: 8px; }
+.vision-guide summary { cursor: pointer; color: #b7b7b7; font-size: 11px; }
+.vision-guide summary:focus-visible { outline: 2px solid #e0e0e0; outline-offset: 3px; }
+
+.vision-drawing-help { display: none; }
+.vision-panel[data-mode='drawing'] .vision-drawing-help { display: block; }
+.vision-frame-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.vision-frame-actions button { font-size: 10px; }
+.vision-frame-actions button:disabled { opacity: .4; cursor: default; }
+.vision-energy-frame { position: fixed; z-index: 80; pointer-events: none; overflow: hidden; border: 1px solid #d7b8ff; box-shadow: 0 0 0 1px #13101888; border-radius: 3px; }
+.vision-energy-frame[hidden] { display: none; }
+.vision-energy-frame[data-draft='true'] { border-style: dashed; }
+.vision-frame-label { position: absolute; top: 7px; left: 8px; color: #dbdbdb; background: #191919e8; font-size: 9px; letter-spacing: .1em; padding: 4px 6px; border-radius: 3px; }
+.vision-energy-frame button { position: absolute; right: 5px; top: 5px; width: 22px; height: 22px; border: 1px solid #c4c4c455; border-radius: 4px; color: #dbdbdb; background: #191919e8; cursor: pointer; pointer-events: auto; }
+
+.vision-energy-frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.vision-energy-frame { border-color: #67ebfbaa; box-shadow: 0 0 18px #42e5ff33, inset 0 0 20px #42e5ff18; }
+
+.vision-energy-frame[data-rotated='true'] { border: 0; box-shadow: none; border-radius: 0; }
+
+.vision-pressure { position: fixed; z-index: 85; pointer-events: none; padding: 11px 12px; border: 1px solid #d1d1d140; border-radius: 10px; background: #181818f5; color: #d5d5d5; box-shadow: 0 8px 24px #00000055; font: 9px ui-monospace, SFMono-Regular, monospace; }
+.vision-pressure[hidden] { display: none; }
+.vision-pressure header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.vision-pressure strong { font-size: 9px; letter-spacing: .06em; font-weight: 500; }
+.vision-pressure-bias { white-space: nowrap; }
+.vision-pressure-bias[data-side='buy'] { color: #d0d0d0; }
+.vision-pressure-bias[data-side='sell'] { color: #aaaaaa; }
+.vision-pressure-surface { display: block; width: 100%; height: 136px; background: #181818; border: 1px solid #ffffff12; border-radius: 7px; }
+.vision-pressure-scale { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; color: #b3b3b3; font-size: 8px; }
+.vision-pressure-scale i { flex: 1; height: 3px; border-radius: 2px; background: linear-gradient(90deg,#13072e,#330e64,#194177,#218283,#6aa54a,#ebc624,#f96d0e,#cc1d2b); }
+.vision-pressure footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 8px; margin-top: 8px; color: #939393; font-size: 8px; }
+
+.vision-pressure-empty { margin-left: 6px; color: #858585; }
+
+.vision-pointer[data-hand='Right'] .vision-ring { stroke-dasharray: 3 3; }
+.vision-menu-cancel:focus-visible { outline: 1px solid #e5e5e5; outline-offset: 3px; }
+.vision-library-source { color: var(--vision-muted); font-size: 10px; text-underline-offset: 3px; }

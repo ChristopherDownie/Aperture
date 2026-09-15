@@ -1,0 +1,30 @@
+{
+  "name": "aperture",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
+    "predev": "node scripts/vision-assets.mjs",
+    "prebuild": "node scripts/vision-assets.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "library": "node scripts/library.mjs"
+  },
+  "dependencies": {
+    "@luxalgo/vela": "0.7.3",
+    "@mediapipe/tasks-vision": "0.10.14"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.0"
+  },
+  "description": "Gesture-controlled chart exploration built on Vela, with LuxAlgo Library MCP references.",
+  "license": "MIT",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

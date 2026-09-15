@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@luxalgo/vela@0.7.3'
